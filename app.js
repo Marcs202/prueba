@@ -5,13 +5,11 @@ const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const homeRoutes = require('./routes/index')
-const profesionalesRoutes = require('./routes/profesionales');
-const ProfesionalesService = require('./services/profesionales-service');
-const categoriasRoutes = require('./routes/categorias');
-const CategoriasService = require('./services/categorias-service');
-const serviciosRoutes = require('./routes/servicios');
-const ServiciosService= require('./services/servicios-service');
+const homeRoutes = require('./routes/index');
+
+
+const obesidadesRoutes = require('./routes/obecidad');
+const ObesidadesService= require('./services/obecidad-service');
 const app = express();
 //app.set("port",3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -29,9 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Routes
 app.use('/', homeRoutes);
-app.use('/profesionales',profesionalesRoutes);
-app.use('/categorias',categoriasRoutes);
-app.use('/servicios',serviciosRoutes);
+
+app.use('/obesidad',obesidadesRoutes)
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
@@ -50,25 +47,11 @@ app.use((err, req, res) => {
   res.status(err.status || 500);
   res.render('error');
 });
-
-ProfesionalesService.init().then((profesionalesService)=>{
-  app.set('profesionalesService',profesionalesService);
+ObesidadesService.init().then((obecidadsService)=>{
+  app.set('obecidadsService',obecidadsService);
 });
 process.on('exit', () => {
-  app.get('profesionalesService').closePool();
+  app.get('obecidadsService').closePool();
 });
 
-CategoriasService.init().then((categoriasService)=>{
-  app.set('categoriasService',categoriasService);
-});
-process.on('exit', () => {
-  app.get('categoriasService').closePool();
-});
-
-ServiciosService.init().then((serviciosService)=>{
-  app.set('serviciosService',serviciosService);
-});
-process.on('exit', () => {
-  app.get('serviciosService').closePool();
-});
 module.exports = app;
